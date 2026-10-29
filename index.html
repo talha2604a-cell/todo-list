@@ -1,265 +1,61 @@
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Todo List</title>
-
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="min-h-screen bg-[#1e2b3d] flex items-center justify-center font-sans">
+<body class="min-h-screen bg-[#1e2b3d] flex items-center justify-center font-sans p-4">
+    <main class="w-full max-w-xl">
+        <h1 class="text-white text-3xl sm:text-4xl font-bold text-center mb-2">Todo List</h1>
+        <p class="text-slate-300 text-center text-sm mb-5">Add, edit, search and manage your tasks</p>
 
-    <!-- Todo Container -->
-    <div class="w-[232px] max-w-[95%]">
-
-        <!-- Heading -->
-        <h1 class="text-white text-[32px] font-bold text-center mb-3">
-            Todo List
-        </h1>
-
-        <!-- Input Form -->
-        <form id="todoForm" class="flex w-full h-[43px] mb-[17px]">
-
-            <input
-                type="text"
-                id="taskInput"
-                placeholder="Enter Any Task....."
-                autocomplete="off"
-                class="w-full min-w-0 bg-[#60758f] text-white
-                placeholder:text-gray-300 text-[13px]
-                px-[11px] rounded-l-full outline-none
-                focus:ring-2 focus:ring-[#9aaac0]"
-            >
-
-            <button
-                type="submit"
-                class="bg-[#02091c] text-white px-[14px]
-                text-sm rounded-r-full hover:bg-black transition"
-            >
+        <form id="todoForm" class="flex w-full h-12 mb-4">
+            <input type="text" id="taskInput" placeholder="Enter any task..." autocomplete="off"
+                class="w-full min-w-0 bg-[#60758f] text-white placeholder:text-gray-300 text-sm px-4 rounded-l-full outline-none focus:ring-2 focus:ring-[#9aaac0]">
+            <button type="submit" class="bg-[#02091c] text-white px-5 text-sm font-semibold rounded-r-full hover:bg-black transition">
                 Add
             </button>
-
         </form>
 
-        <!-- Table Container -->
-        <div class="bg-[#9aaac0] rounded-[11px] p-[17px]">
-
-            <table class="w-full border-collapse text-white text-sm">
-
-                <thead>
-                    <tr class="bg-[#10192d]">
-
-                        <th class="text-left px-[11px] py-[13px] font-bold">
-                            Details
-                        </th>
-
-                        <th class="text-left px-[11px] py-[13px] font-bold">
-                            Actions
-                        </th>
-
-                    </tr>
-                </thead>
-
-                <!-- Tasks will appear here -->
-                <tbody id="taskList"></tbody>
-
-            </table>
-
-            <!-- Empty Message -->
-            <p
-                id="emptyMessage"
-                class="text-center text-xs text-[#10192d] mt-3 hidden"
-            >
-                No tasks yet!
-            </p>
-
+        <div class="flex flex-col sm:flex-row gap-3 mb-4">
+            <input type="search" id="searchInput" placeholder="Search tasks..."
+                class="flex-1 min-w-0 bg-white/10 border border-slate-500 text-white placeholder:text-slate-300 rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-slate-300">
+            <select id="filterSelect" aria-label="Filter tasks"
+                class="bg-[#60758f] text-white rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-slate-300">
+                <option value="all">All Tasks</option>
+                <option value="pending">Pending</option>
+                <option value="completed">Completed</option>
+            </select>
         </div>
 
-    </div>
-
-    <!-- JavaScript -->
-    <script>
-
-        const todoForm = document.getElementById("todoForm");
-        const taskInput = document.getElementById("taskInput");
-        const taskList = document.getElementById("taskList");
-        const emptyMessage = document.getElementById("emptyMessage");
-
-        // Tasks Array
-        let tasks = [];
-
-        // Add Task
-        todoForm.addEventListener("submit", function (event) {
-
-            event.preventDefault();
-
-            const taskText = taskInput.value.trim();
-
-            // Check Empty Input
-            if (taskText === "") {
-                alert("Please enter something!");
-                taskInput.focus();
-                return;
-            }
-
-            // Create Task Object
-            const task = {
-                id: Date.now(),
-                text: taskText,
-                completed: false
-            };
-
-            // Add Data to Array
-            tasks.push(task);
-
-            // Clear Input
-            taskInput.value = "";
-
-            // Display Updated Tasks
-            displayTasks();
-
-            taskInput.focus();
-
-        });
-
-
-        // Display Tasks
-        function displayTasks() {
-
-            taskList.innerHTML = "";
-
-            // Show Empty Message
-            emptyMessage.classList.toggle(
-                "hidden",
-                tasks.length !== 0
-            );
-
-            // Loop Through Tasks
-            tasks.forEach(function (task) {
-
-                const row = document.createElement("tr");
-
-                row.className =
-                    "border-b border-[#9aaac0] bg-[#10192d]";
-
-
-                // Details Cell
-                const detailsCell = document.createElement("td");
-
-                detailsCell.className =
-                    "px-[11px] py-3 break-words max-w-[110px]";
-
-                const taskText = document.createElement("span");
-
-                taskText.textContent = task.text;
-
-                // Completed Task Styling
-                if (task.completed) {
-
-                    taskText.classList.add(
-                        "line-through",
-                        "text-gray-400"
-                    );
-
-                }
-
-                detailsCell.appendChild(taskText);
-
-
-                // Actions Cell
-                const actionsCell = document.createElement("td");
-
-                actionsCell.className = "px-2 py-3";
-
-                const actionsWrapper = document.createElement("div");
-
-                actionsWrapper.className =
-                    "flex items-center gap-2";
-
-
-                // Done / Undo Button
-                const completeButton =
-                    document.createElement("button");
-
-                completeButton.type = "button";
-
-                completeButton.textContent =
-                    task.completed ? "Undo" : "Done";
-
-                completeButton.className =
-                    "text-green-400 text-xs hover:text-green-200";
-
-
-                completeButton.addEventListener("click", function () {
-
-                    task.completed = !task.completed;
-
-                    displayTasks();
-
-                });
-
-
-                // Delete Button
-                const deleteButton =
-                    document.createElement("button");
-
-                deleteButton.type = "button";
-
-                deleteButton.textContent = "×";
-
-                deleteButton.className =
-                    "text-red-400 text-lg leading-none hover:text-red-200";
-
-                deleteButton.setAttribute(
-                    "aria-label",
-                    "Delete " + task.text
-                );
-
-
-                deleteButton.addEventListener("click", function () {
-
-                    tasks = tasks.filter(function (item) {
-
-                        return item.id !== task.id;
-
-                    });
-
-                    displayTasks();
-
-                });
-
-
-                // Add Buttons to Actions
-                actionsWrapper.appendChild(completeButton);
-
-                actionsWrapper.appendChild(deleteButton);
-
-                actionsCell.appendChild(actionsWrapper);
-
-
-                // Add Cells to Row
-                row.appendChild(detailsCell);
-
-                row.appendChild(actionsCell);
-
-
-                // Add Row to Table
-                taskList.appendChild(row);
-
-            });
-
-        }
-
-
-        // Initial Display
-        displayTasks();
-
-    </script>
-
+        <div class="bg-[#9aaac0] rounded-xl p-3 sm:p-5 shadow-xl">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3 text-[#10192d]">
+                <p class="font-semibold text-sm">Your Tasks</p>
+                <p id="taskCounter" class="text-sm font-semibold" aria-live="polite">Total: 0 | Done: 0</p>
+            </div>
+
+            <div class="overflow-x-auto rounded-lg">
+                <table class="w-full border-collapse text-white text-sm">
+                    <thead>
+                        <tr class="bg-[#10192d]">
+                            <th class="text-center px-2 py-3 font-bold w-12">#</th>
+                            <th class="text-left px-3 py-3 font-bold">Details</th>
+                            <th class="text-center px-3 py-3 font-bold">Done</th>
+                            <th class="text-center px-3 py-3 font-bold">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="taskList"></tbody>
+                </table>
+            </div>
+
+            <p id="emptyMessage" class="text-center text-xs text-[#10192d] mt-4">No tasks yet! Add your first task.</p>
+            <p id="noResults" class="text-center text-xs text-[#10192d] mt-4 hidden">No matching tasks found.</p>
+        </div>
+    </main>
+
+   <script src="app.js"></script>
 </body>
 </html>
